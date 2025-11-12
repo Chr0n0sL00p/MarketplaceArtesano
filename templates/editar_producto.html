@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Editar Producto{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h2>Editar Producto</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="text" name="nombre" value="{{ producto.nombre }}" placeholder="Nombre del producto" required>
+        <input type="number" name="precio" value="{{ producto.precio }}" placeholder="Precio" step="0.01" required>
+        <input type="text" name="categoria" value="{{ producto.categoria }}" placeholder="Categoría" required>
+        <textarea name="descripcion" placeholder="Descripción">{{ producto.descripcion }}</textarea>
+        <input type="file" name="imagen" accept="image/*">
+        <button type="submit">Guardar Cambios</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Mi Tienda{% endblock %}
+{% block content %}
+
+<section class="auth-section">
+    <h2>🛍️ Mi Tienda: {{ tienda.nombre }}</h2>
+    <p><strong> Ubicación:</strong> {{ tienda.ubicacion }}</p>
+    <p><strong> Descripción:</strong> {{ tienda.descripcion }}</p>
+
+    {% if notificaciones > 0 %}
+    <p style="color:red; font-weight:bold;">
+        Tienes {{ notificaciones }} nuevas venta sin revisar.
+    </p>
+    {% endif %}
+
+    <div style="text-align:center; margin-top: 20px;">
+        <a href="{% url 'crear_producto' %}" class="btn">+ Agregar Producto</a>
+    </div>
+
+    <hr>
+
+    <h3>Mis productos</h3>
+
+    {% if productos %}
+    <div class="productos-grid">
+        {% for producto in productos %}
+        <div class="producto-card">
+            {% if producto.imagen %}
+            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+            {% endif %}
+            <h3>{{ producto.nombre }}</h3>
+            <p>{{ producto.descripcion }}</p>
+            <p><strong>${{ producto.precio }}</strong></p>
+            <div class="acciones">
+                <a href="{% url 'editar_producto' producto.id %}" class="btn btn-edit">Editar</a>
+                <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-delete"
+                    onclick="return confirm('¿Eliminar este producto?');">Eliminar</a>
+                <a href="{% url 'simular_venta' producto.id %}" class="btn btn-success">Simular venta</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No tienes productos aún. ¡Agrega el primero!</p>
+    {% endif %}
+    {% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-box">
+        <h2>Iniciar Sesión</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="usuario">Usuario</label>
+                <input type="text" name="usuario" id="usuario" placeholder="Ingresa tu nombre de usuario" required>
+            </div>
+
+            <div class="input-group">
+                <label for="contraseña">Contraseña</label>
+                <input type="password" name="contraseña" id="contraseña" placeholder="Ingresa tu contraseña" required>
+            </div>
+
+            <button type="submit" class="btn">Ingresar</button>
+        </form>
+
+        <p class="redirect-text">
+            ¿No tienes cuenta? <a href="{% url 'registro_artesano' %}">Regístrate aquí</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Marketplace Artesanal{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <h1> Marketplace Artesanal</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}">Inicio</a></li>
+                    {% if user.is_authenticated %}
+                    {% if tiene_tienda %}
+                    <li><a href="{% url 'mi_tienda' %}"> Mi Tienda
+                            {% if notificaciones > 0 %}
+                            <span class="badge bg-danger">{{ notificaciones }}</span>
+                            {% endif %}
+                        </a>
+
+                        </a></li>
+
+                    <li><a href="{% url 'crear_producto' %}">Agregar Producto</a></li>
+                    {% else %}
+                    <li><a href="{% url 'crear_tienda' %}">Crear Tienda</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
+                    <li><a href="{% url 'registro_artesano' %}">Registrarse</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Marketplace Artesanal - Creado con ❤️ por artesanos</p>
+    </footer>
+
+</body>
+
+</html>
