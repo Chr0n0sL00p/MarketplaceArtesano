@@ -187,3 +187,6 @@ def simular_venta(request, producto_id):
     Venta.objects.create(producto=producto, comprador=request.user)
     messages.success(request, f"✅ Simulaste la venta de {producto.nombre}.")
     return HttpResponseRedirect(reverse('mi_tienda'))
+
+def admin_dashboard(request):
+    return render(request, 'admin.html')

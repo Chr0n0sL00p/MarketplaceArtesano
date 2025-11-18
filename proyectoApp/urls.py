@@ -28,6 +28,7 @@ urlpatterns = [
     path('editar_producto/<int:producto_id>/', views.editar_producto, name='editar_producto'),
     path('eliminar_producto/<int:producto_id>/', views.eliminar_producto, name='eliminar_producto'),
     path('simular_venta/<int:producto_id>/', views.simular_venta, name='simular_venta'),
+    path('ad/', views.admin_dashboard, name='admin_dashboard'),
 
 
 ]
