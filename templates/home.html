@@ -1,10 +1,50 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Inicio{% endblock %}
+
 {% block content %}
-<h2>Bienvenido al Marketplace Artesanal</h2>
-{% if user.is_authenticated %}
-<p>Hola, {{ user.usuario }} 👋</p>
-{% else %}
-<p>Inicia sesión o regístrate para comenzar.</p>
-{% endif %}
+
+<!-- HERO BANNER -->
+<section class="hero-banner">
+    <h1>Bienvenido al Marketplace Artesanal</h1>
+    <p>Creaciones únicas hechas con amor por artesanos locales</p>
+</section>
+
+<!-- PRODUCTOS DESTACADOS -->
+<section class="destacados">
+    <h2> Productos Destacados</h2>
+
+    <div class="destacados-grid">
+
+        <!-- Tarjeta 1 -->
+        <div class="destacado-card">
+            <div class="img-wrapper">
+                <img src="{% static 'img/Collar.jpg' %}" alt="Collar artesanal">
+            </div>
+            <h3>Collar artesanal</h3>
+            <p>Hecho con piedras naturales seleccionadas.</p>
+        </div>
+
+        <!-- Tarjeta 2 -->
+        <div class="destacado-card">
+            <div class="img-wrapper">
+                <img src="{% static 'img/Pulsera.jpg' %}" alt="Pulsera artesanal">
+            </div>
+            <h3>Pulsera artesanal</h3>
+            <p>Diseñada por artesanos locales con materiales reciclados.</p>
+        </div>
+
+        <!-- Tarjeta 3 -->
+        <div class="destacado-card">
+            <div class="img-wrapper">
+                <img src="{% static 'img/Taza.jpg' %}" alt="Taza cerámica">
+            </div>
+            <h3>Taza de cerámica</h3>
+            <p>Pintada a mano con diseños únicos.</p>
+        </div>
+
+    </div>
+</section>
+
 {% endblock %}

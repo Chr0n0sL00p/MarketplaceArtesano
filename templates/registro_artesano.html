@@ -5,12 +5,22 @@
 {% block content %}
 <div class="form-container">
     <div class="form-box">
+        <!-- Mostrar mensajes SOLO en login -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
         <h2>Registro de Artesano</h2>
-        <form method="POST">
+
+        <form method="POST" id="registroForm">
             {% csrf_token %}
             <div class="input-group">
                 <label for="usuario">Usuario</label>
-                <input type="text" name="usuario" id="usuario" placeholder="Crea tu nombre de usuario" required>
+                <input type="text" name="usuario" id="usuario" placeholder="Crea tu nombre de usuario" required
+                    minlength="3">
             </div>
 
             <div class="input-group">
@@ -20,7 +30,14 @@
 
             <div class="input-group">
                 <label for="contraseña">Contraseña</label>
-                <input type="password" name="contraseña" id="contraseña" placeholder="Crea una contraseña segura" required>
+                <input type="password" name="contraseña" id="contraseña" placeholder="Mínimo 8 caracteres y un número"
+                    required>
+            </div>
+
+            <div class="input-group">
+                <label for="confirmar_contraseña">Confirmar contraseña</label>
+                <input type="password" name="confirmar_contraseña" id="confirmar_contraseña"
+                    placeholder="Repite tu contraseña" required>
             </div>
 
             <button type="submit" class="btn">Registrarse</button>
@@ -31,4 +48,25 @@
         </p>
     </div>
 </div>
+
+<style>
+    .alert {
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+
+    .alert-error {
+        background: #ffe0e0;
+        color: #c62828;
+        border-left: 4px solid #f5576c;
+    }
+
+    .alert-success {
+        background: #e0f7e0;
+        color: #2e7d32;
+        border-left: 4px solid #43e97b;
+    }
+</style>
 {% endblock %}

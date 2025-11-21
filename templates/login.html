@@ -5,6 +5,14 @@
 {% block content %}
 <div class="form-container">
     <div class="form-box">
+        <!-- Mostrar mensajes SOLO en login -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
         <h2>Iniciar Sesión</h2>
         <form method="POST">
             {% csrf_token %}
@@ -26,4 +34,24 @@
         </p>
     </div>
 </div>
+<style>
+    .alert {
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+
+    .alert-error {
+        background: #ffe0e0;
+        color: #c62828;
+        border-left: 4px solid #f5576c;
+    }
+
+    .alert-success {
+        background: #e0f7e0;
+        color: #2e7d32;
+        border-left: 4px solid #43e97b;
+    }
+</style>
 {% endblock %}

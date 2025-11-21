@@ -2,36 +2,65 @@
 {% block title %}Agregar Producto{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Agregar Nuevo Producto</h2>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="nombre">Nombre del producto</label>
-            <input type="text" id="nombre" name="nombre" required placeholder="Ej: Pulsera de cuero">
-        </div>
+<div class="agregar-producto-container">
+    <div class="producto-form-box">
+        <h2> Agregar Nuevo Producto</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        <div class="form-group">
-            <label for="precio">Precio ($)</label>
-            <input type="number" id="precio" name="precio" step="0.01" required placeholder="Ej: 15000">
-        </div>
+            <div class="form-group">
+                <label for="nombre">Nombre del producto</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ej: Pulsera de cuero">
+            </div>
 
-        <div class="form-group">
-            <label for="categoria">Categoría</label>
-            <input type="text" id="categoria" name="categoria" required placeholder="Ej: Joyería">
-        </div>
+            <div class="form-group">
+                <label for="precio">Precio (CLP)</label>
+                <!-- Input visible (formateado) -->
+                <input type="text" id="precio_mostrado" placeholder="Ej: 15.000" required>
+                <!-- Input REAL que se envía al backend -->
+                <input type="hidden" id="precio" name="precio">
+            </div>
 
-        <div class="form-group">
-            <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describe tu producto..."></textarea>
-        </div>
+            <div class="form-group">
+                <label for="categoria">Categoría</label>
+                <input type="text" id="categoria" name="categoria" required placeholder="Ej: Joyería">
+            </div>
 
-        <div class="form-group">
-            <label for="imagen">Imagen del producto</label>
-            <input type="file" id="imagen" name="imagen" accept="image/*">
-        </div>
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describe tu producto..."></textarea>
+            </div>
 
-        <button type="submit" class="btn-guardar">Guardar Producto</button>
-    </form>
+            <div class="form-group">
+                <label for="imagen">Imagen del producto</label>
+                <input type="file" id="imagen" name="imagen" accept="image/*">
+            </div>
+
+            <button type="submit" class="btn-guardar">Guardar Producto</button>
+        </form>
+    </div>
 </div>
+
+<script>
+    const inputVisible = document.getElementById("precio_mostrado");
+    const inputReal = document.getElementById("precio");
+
+    function formatearCLP(numero) {
+        return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    inputVisible.addEventListener("input", () => {
+        let valor = inputVisible.value.replace(/\D/g, ""); // Solo números
+
+        if (valor === "") {
+            inputVisible.value = "";
+            inputReal.value = "";
+            return;
+        }
+
+        inputReal.value = valor;                        // Valor real sin formato
+        inputVisible.value = formatearCLP(valor);       // Valor formateado
+    });
+</script>
+
 {% endblock %}

@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% block title %}Mi Tienda{% endblock %}
 {% block content %}
 
 <section class="auth-section">
     <h2>🛍️ Mi Tienda: {{ tienda.nombre }}</h2>
-    <p><strong> Ubicación:</strong> {{ tienda.ubicacion }}</p>
-    <p><strong> Descripción:</strong> {{ tienda.descripcion }}</p>
+    <p><strong>Ubicación:</strong> {{ tienda.ubicacion }}</p>
+    <p><strong>Descripción:</strong> {{ tienda.descripcion }}</p>
 
     {% if notificaciones > 0 %}
     <p style="color:red; font-weight:bold;">
-        Tienes {{ notificaciones }} nuevas venta sin revisar.
+        ⚠️ Tienes {{ notificaciones }} nueva{% if notificaciones > 1 %}s{% endif %} venta{% if notificaciones > 1 %}s{% endif %} sin revisar.
     </p>
     {% endif %}
 
-    <div style="text-align:center; margin-top: 20px;">
-        <a href="{% url 'crear_producto' %}" class="btn">+ Agregar Producto</a>
+    <div style="text-align:center; margin: 35px 0 30px 0;">
+        <a href="{% url 'crear_producto' %}" class="btn" style="width: auto; padding: 12px 30px;">+ Agregar Producto</a>
     </div>
 
     <hr>
@@ -27,20 +28,30 @@
         <div class="producto-card">
             {% if producto.imagen %}
             <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+            {% else %}
+            <div style="width:150px; height:150px; background:#e0e0e0; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#999; flex-shrink:0;">
+                Sin imagen
+            </div>
             {% endif %}
-            <h3>{{ producto.nombre }}</h3>
-            <p>{{ producto.descripcion }}</p>
-            <p><strong>${{ producto.precio }}</strong></p>
-            <div class="acciones">
-                <a href="{% url 'editar_producto' producto.id %}" class="btn btn-edit">Editar</a>
-                <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-delete"
-                    onclick="return confirm('¿Eliminar este producto?');">Eliminar</a>
-                <a href="{% url 'simular_venta' producto.id %}" class="btn btn-success">Simular venta</a>
+            
+            <div class="producto-info">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion|truncatewords:20 }}</p>
+                <p class="precio">$ {{ producto.precio|intcomma }}</p>
+
+                <div class="acciones">
+                    <a href="{% url 'editar_producto' producto.id %}" class="btn btn-edit">✏️ Editar</a>
+                    <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-delete"
+                        onclick="return confirm('¿Eliminar este producto?');">🗑️ Eliminar</a>
+                    <a href="{% url 'simular_venta' producto.id %}" class="btn btn-success">💰 Simular venta</a>
+                </div>
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <p>No tienes productos aún. ¡Agrega el primero!</p>
+    <p style="text-align:center; color:#666; margin:40px 0;">No tienes productos aún. ¡Agrega el primero!</p>
     {% endif %}
-    {% endblock %}
+</section>
+
+{% endblock %}

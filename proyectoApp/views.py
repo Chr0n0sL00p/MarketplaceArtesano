@@ -38,20 +38,43 @@ def logout_usuario(request):
     messages.info(request, "Has cerrado sesión correctamente.")
     return HttpResponseRedirect(reverse('login'))
 
-
-# Registro de artesano
+#registro artesano 
 def registro_artesano(request):
     if request.method == 'POST':
         usuario = request.POST.get('usuario')
         email = request.POST.get('email')
         contraseña = request.POST.get('contraseña')
+        confirmar_contraseña = request.POST.get('confirmar_contraseña')
+
+        # Validaciones simples
+        errores = []
+
+        # Verificar si el usuario ya existe
+        if User.objects.filter(username=usuario).exists():
+            errores.append('El nombre de usuario ya está en uso.')
 
         # Validar que el correo no exista
         if User.objects.filter(email=email).exists():
-            messages.error(request, "El correo ya está registrado.")
+            errores.append("El correo ya está registrado.")
+
+        # Validar contraseña (solo requisitos básicos)
+        if len(contraseña) < 8:
+            errores.append('La contraseña debe tener al menos 8 caracteres.')
+        
+        if not any(char.isdigit() for char in contraseña):
+            errores.append('La contraseña debe contener al menos un número.')
+
+        # Verificar que las contraseñas coincidan
+        if contraseña != confirmar_contraseña:
+            errores.append('Las contraseñas no coinciden.')
+
+        # Si hay errores, mostrarlos y no continuar
+        if errores:
+            for error in errores:
+                messages.error(request, error)
             return HttpResponseRedirect(reverse('registro_artesano'))
 
-        # Crear usuario base de Django (parámetros correctos)
+        # Crear usuario base de Django
         user = User.objects.create_user(username=usuario, email=email, password=contraseña)
 
         # Crear perfil asociado al usuario
@@ -61,7 +84,6 @@ def registro_artesano(request):
         return HttpResponseRedirect(reverse('login'))
 
     return render(request, 'registro_artesano.html')
-
 
 
 # Crear tienda formulario y guardado

@@ -39,7 +39,7 @@ class Producto(models.Model):
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    precio = models.IntegerField()
     categoria = models.CharField(max_length=100)
     imagen = models.URLField(blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,514 @@
+/* ============================
+   ESTILOS GLOBALES
+============================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f2eefc;
+    margin: 0;
+    padding: 0;
+}
+
+/* ============================
+   HEADER
+============================ */
+header {
+    background: linear-gradient(90deg, #7b2ff7, #9f44f8);
+    color: white;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    margin: auto;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 18px;
+    margin: 0;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* ============================
+   FORMULARIOS (LOGIN / REGISTRO)
+============================ */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 60vh;
+}
+
+.form-box {
+    background: white;
+    width: 100%;
+    max-width: 420px;
+    padding: 30px 35px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.form-box h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 25px;
+    color: #5725c0;
+}
+
+/* Inputs */
+.input-group {
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: #4a3d7a;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #bbb;
+    margin-top: 5px;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #a03fff;
+    box-shadow: 0 0 5px rgba(160, 63, 255, 0.5);
+}
+
+/* BOTONES GENERALES */
+.btn, 
+button:not(.badge), 
+input[type="submit"] {
+    width: 100%;
+    background: linear-gradient(90deg, #7b2ff7, #ff4fd6);
+    border: none;
+    padding: 12px;
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn:hover,
+button:hover,
+input[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(160, 63, 255, 0.5);
+}
+
+/* TEXTO DE REDIRECCIÓN */
+.redirect-text {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.redirect-text a {
+    color: #7b2ff7;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.redirect-text a:hover {
+    text-decoration: underline;
+}
+
+/* ============================
+   ANIMACIONES
+============================ */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(-10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* ============================
+   FOOTER
+============================ */
+footer {
+    margin-top: 40px;
+    text-align: center;
+    padding: 20px;
+    color: #444;
+    font-size: 0.9rem;
+}
+
+/* ============================
+   HERO BANNER (HOME)
+============================ */
+.hero-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    padding: 80px 20px;
+    margin-bottom: 40px;
+    border-radius: 15px;
+}
+
+.hero-banner h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.hero-banner p {
+    font-size: 1.2rem;
+}
+
+/* ============================
+   PRODUCTOS DESTACADOS (HOME - VERTICAL)
+============================ */
+.destacados {
+    padding: 40px 20px;
+}
+
+.destacados h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.destacados-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.destacado-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.destacado-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.img-wrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background: #f5f5f5;
+}
+
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.destacado-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #5725c0;
+}
+
+.destacado-card p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+}
+
+/* ============================
+   MI TIENDA (HORIZONTAL)
+============================ */
+.auth-section {
+    padding: 40px 20px;
+}
+
+.auth-section h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.auth-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #5725c0;
+    text-align: center;
+}
+
+.productos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.producto-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.producto-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.producto-card img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
+    background: #f5f5f5;
+}
+
+.producto-info {
+    flex: 1;
+    text-align: left;
+}
+
+.producto-info h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: #5725c0;
+}
+
+.producto-info p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.producto-info .precio {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #7b2ff7;
+    margin: 10px 0;
+}
+
+/* Botones de acciones del producto */
+.acciones {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.acciones .btn {
+    width: auto;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* Responsive: En móviles vuelve a vertical */
+@media (max-width: 768px) {
+    .producto-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .producto-card img {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .producto-info {
+        text-align: center;
+    }
+    
+    .acciones {
+        justify-content: center;
+    }
+}
+
+.btn-edit {
+    background: linear-gradient(90deg, #4facfe, #00f2fe) !important;
+}
+
+.btn-delete {
+    background: linear-gradient(90deg, #f093fb, #f5576c) !important;
+}
+
+.btn-success {
+    background: linear-gradient(90deg, #43e97b, #38f9d7) !important;
+}
+
+/* ============================
+   AGREGAR/EDITAR PRODUCTO
+============================ */
+.agregar-producto-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 70vh;
+}
+
+.producto-form-box {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.producto-form-box h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #5725c0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #4a3d7a;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="file"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #bbb;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+    font-family: Arial, sans-serif;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #a03fff;
+    box-shadow: 0 0 5px rgba(160, 63, 255, 0.5);
+}
+
+.btn-guardar {
+    width: 100%;
+    background: linear-gradient(90deg, #7b2ff7, #ff4fd6);
+    border: none;
+    padding: 14px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-guardar:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(160, 63, 255, 0.5);
+}
+
+/* ============================
+   SECCIÓN AUTH (CREAR TIENDA)
+============================ */
+.auth-section {
+    max-width: 600px;
+    margin: 40px auto;
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.subtext {
+    text-align: center;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.auth-section p {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.auth-section hr {
+    border: none;
+    border-top: 2px solid #e0e0e0;
+    margin: 30px 0;
+}
+
+/* Notificaciones */
+.auth-section p[style*="color:red"] {
+    background: #ffe0e0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #f5576c;
+}
