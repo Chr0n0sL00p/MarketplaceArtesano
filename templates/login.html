@@ -5,17 +5,21 @@
 {% block content %}
 <div class="form-container">
     <div class="form-box">
+
         <!-- Mostrar mensajes SOLO en login -->
         {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-        </div>
-        {% endfor %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endif %}
+
         <h2>Iniciar Sesión</h2>
+
         <form method="POST">
             {% csrf_token %}
+
             <div class="input-group">
                 <label for="usuario">Usuario</label>
                 <input type="text" name="usuario" id="usuario" placeholder="Ingresa tu nombre de usuario" required>
@@ -30,10 +34,18 @@
         </form>
 
         <p class="redirect-text">
-            ¿No tienes cuenta? <a href="{% url 'registro_artesano' %}">Regístrate aquí</a>
+            ¿No tienes cuenta?  
+            <a href="{% url 'registro_artesano' %}">Regístrate aquí</a>
         </p>
+
+        <!-- NUEVO: Botón para ir al login de compradores -->
+        <a href="{% url 'compradores:login' %}" class="secondary-btn">
+            Ir al Login de Compradores
+        </a>
+
     </div>
 </div>
+
 <style>
     .alert {
         padding: 12px 15px;
@@ -53,5 +65,23 @@
         color: #2e7d32;
         border-left: 4px solid #43e97b;
     }
+
+    .secondary-btn {
+        display: block;
+        margin-top: 15px;
+        text-align: center;
+        background: #ececec;
+        padding: 10px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .secondary-btn:hover {
+        background: #dcdcdc;
+    }
 </style>
+
 {% endblock %}

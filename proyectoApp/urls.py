@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.urls import path
 from . import views
+from django.urls import path, include
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('eliminar_producto/<int:producto_id>/', views.eliminar_producto, name='eliminar_producto'),
     path('simular_venta/<int:producto_id>/', views.simular_venta, name='simular_venta'),
     path('ad/', views.admin_dashboard, name='admin_dashboard'),
-
-
+    path('comprador/', include('compradoresApp.urls', namespace='compradores')),
 ]
+
+

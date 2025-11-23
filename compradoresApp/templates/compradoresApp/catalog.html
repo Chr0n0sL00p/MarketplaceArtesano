@@ -1,0 +1,73 @@
+{% extends "compradoresApp/base.html" %}
+{% block title %}Catálogo — Artesanos{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-left">
+    <h1>Catálogo</h1>
+    <p>Busca por categoría, ubicación o precio. Productos de artesanos locales.</p>
+  </div>
+  <div class="hero-right">
+    <img src="/mnt/data/Eva-Proyecto-Integrado.jpg" alt="HU diagram" class="hero-image">
+  </div>
+</section>
+
+<section class="filters">
+  <form method="get" class="filter-form">
+    <input name="category" placeholder="Categoría" value="{{ request.GET.category }}">
+    <input name="location" placeholder="Ciudad / Región" value="{{ request.GET.location }}">
+    <input name="min_price" placeholder="Min $" value="{{ request.GET.min_price }}">
+    <input name="max_price" placeholder="Max $" value="{{ request.GET.max_price }}">
+    <button class="btn" type="submit">Filtrar</button>
+  </form>
+</section>
+
+<section class="grid">
+  {% for p in products %}
+  <article class="card">
+    <a class="card-link" href="{% url 'compradores:product_detail' p.pk %}">
+      {% if p.image %}
+        <img class="card-img" src="{{ p.image.url }}" alt="{{ p.title }}">
+      {% else %}
+        <div class="card-img placeholder">Sin imagen</div>
+      {% endif %}
+      <div class="card-body">
+        <h3>{{ p.title }}</h3>
+        <p class="meta">{{ p.category.name|default_if_none:"" }} • {{ p.location }}</p>
+        <div class="price-row">
+          <strong class="price">${{ p.price }}</strong>
+          <span class="rating">⭐ {{ p.average_rating }}</span>
+        </div>
+      </div>
+    </a>
+
+    <div class="card-actions">
+      <form method="post" action="{% url 'compradores:create_order' p.pk %}">
+        {% csrf_token %}
+        <button class="btn tiny">Comprar</button>
+      </form>
+      <form method="post" action="{% url 'compradores:toggle_favorite' p.pk %}">
+        {% csrf_token %}
+        <button class="btn ghost tiny">
+        {% if user.is_authenticated and p.is_favorite %}
+          Quitar
+        {% else %}
+          ♥ Favorito
+        {% endif %}
+
+        </button>
+      </form>
+    </div>
+  </article>
+  {% empty %}
+  <p>No hay productos que coincidan.</p>
+  {% endfor %}
+</section>
+
+<div class="pagination">
+  {% if products.has_previous %}<a href="?page={{ products.previous_page_number }}" class="btn ghost">Anterior</a>{% endif %}
+  <span>Página {{ products.number }} de {{ products.paginator.num_pages }}</span>
+  {% if products.has_next %}<a href="?page={{ products.next_page_number }}" class="btn ghost">Siguiente</a>{% endif %}
+</div>
+
+{% endblock %}

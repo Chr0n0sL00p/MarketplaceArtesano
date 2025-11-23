@@ -3,7 +3,7 @@ from .models import Perfil, Tienda, Producto
 
 @admin.register(Perfil)
 class PerfilAdmin(admin.ModelAdmin):
-    list_display = ('user', 'rol', 'telefono', 'ciudad', 'verificado')
+    list_display = ('user', 'rol', 'telefono', 'ciudad')
     search_fields = ('user__username', 'rol', 'ciudad')
 
 

@@ -1,0 +1,22 @@
+{% comment %}
+Este partial es incluido en product_detail. Espera:
+- review_form en contexto
+- user autenticado
+- action a compradores:add_review
+- product en contexto
+{% endcomment %}
+
+{% if user.is_authenticated %}
+  <form method="post" action="{% url 'compradores:add_review' product.pk %}" class="review-form">
+    {% csrf_token %}
+    <label>Calificación (1-5)</label>
+    {{ review_form.rating }}
+    <label>Comentario</label>
+    {{ review_form.comment }}
+    <div class="review-actions">
+      <button class="btn" type="submit">Enviar reseña</button>
+    </div>
+  </form>
+{% else %}
+  <p>Debes <a href="{% url 'compradores:login' %}?next={{ request.path }}">iniciar sesión</a> para dejar una reseña.</p>
+{% endif %}

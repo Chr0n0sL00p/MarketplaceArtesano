@@ -1,0 +1,7 @@
+<!-- templates/compradoresApp/partials/share_buttons.html -->
+<div class="share">
+  <p>Compartir:</p>
+  <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">Facebook</a> |
+  <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ product.title }}">Twitter</a> |
+  <a href="mailto:?subject={{ product.title }}&body=Revisa este producto: {{ request.build_absolute_uri }}">Email</a>
+</div>
