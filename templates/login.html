@@ -3,85 +3,53 @@
 {% block title %}Iniciar Sesión{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <div class="form-box">
+<div class="container">
+    <div class="auth-container">
+        <div class="auth-header">
+            <i class="bi bi-person-circle fs-1 text-primary mb-2"></i>
+            <h2>Bienvenido de nuevo</h2>
+            <p class="text-muted">Ingresa a tu cuenta para continuar</p>
+        </div>
 
-        <!-- Mostrar mensajes SOLO en login -->
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
         {% endif %}
-
-        <h2>Iniciar Sesión</h2>
 
         <form method="POST">
             {% csrf_token %}
-
-            <div class="input-group">
-                <label for="usuario">Usuario</label>
-                <input type="text" name="usuario" id="usuario" placeholder="Ingresa tu nombre de usuario" required>
+            <div class="mb-3">
+                <label for="usuario" class="form-label fw-bold text-secondary">Usuario</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-person"></i></span>
+                    <input type="text" name="usuario" id="usuario" class="form-control border-start-0 ps-0"
+                        placeholder="Tu nombre de usuario" required>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label for="contraseña">Contraseña</label>
-                <input type="password" name="contraseña" id="contraseña" placeholder="Ingresa tu contraseña" required>
+            <div class="mb-4">
+                <label for="contraseña" class="form-label fw-bold text-secondary">Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock"></i></span>
+                    <input type="password" name="contraseña" id="contraseña" class="form-control border-start-0 ps-0"
+                        placeholder="Tu contraseña" required>
+                </div>
             </div>
 
-            <button type="submit" class="btn">Ingresar</button>
+            <button type="submit" class="btn btn-primary w-100 py-2 mb-3 shadow-sm">Iniciar Sesión</button>
         </form>
 
-        <p class="redirect-text">
-            ¿No tienes cuenta?  
-            <a href="{% url 'registro_artesano' %}">Regístrate aquí</a>
-        </p>
-
-        <!-- NUEVO: Botón para ir al login de compradores -->
-        <a href="{% url 'compradores:login' %}" class="secondary-btn">
-            Ir al Login de Compradores
-        </a>
-
+        <div class="text-center mt-4 pt-3 border-top">
+            <p class="mb-2 text-muted small">¿No tienes cuenta?</p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{% url 'registro_comprador' %}" class="btn btn-outline-secondary btn-sm">Soy Comprador</a>
+                <a href="{% url 'registro_artesano' %}" class="btn btn-outline-primary btn-sm">Soy Artesano</a>
+            </div>
+        </div>
     </div>
 </div>
-
-<style>
-    .alert {
-        padding: 12px 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-size: 0.9rem;
-    }
-
-    .alert-error {
-        background: #ffe0e0;
-        color: #c62828;
-        border-left: 4px solid #f5576c;
-    }
-
-    .alert-success {
-        background: #e0f7e0;
-        color: #2e7d32;
-        border-left: 4px solid #43e97b;
-    }
-
-    .secondary-btn {
-        display: block;
-        margin-top: 15px;
-        text-align: center;
-        background: #ececec;
-        padding: 10px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #333;
-        font-weight: 600;
-        transition: 0.2s;
-    }
-
-    .secondary-btn:hover {
-        background: #dcdcdc;
-    }
-</style>
-
 {% endblock %}

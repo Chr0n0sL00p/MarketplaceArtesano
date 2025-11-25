@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Mis Pedidos - Marketplace Artesanal{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="d-flex align-items-center mb-4">
+        <h1 class="font-heading mb-0 text-primary"><i class="bi bi-bag-check-fill me-3"></i>Mis Pedidos</h1>
+        <span class="badge bg-light text-dark border ms-3 shadow-sm">{{ pedidos.count }} compras</span>
+    </div>
+
+    {% if pedidos %}
+    <div class="row g-4">
+        {% for pedido in pedidos %}
+        <div class="col-lg-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-scale">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <div class="col-md-3 col-lg-2 bg-light d-flex align-items-center justify-content-center p-3">
+                            {% if pedido.producto.imagen %}
+                            <img src="{{ pedido.producto.imagen.url }}" class="img-fluid rounded-3 shadow-sm" alt="{{ pedido.producto.nombre }}" style="max-height: 120px; object-fit: cover;">
+                            {% else %}
+                            <div class="text-center text-muted opacity-50">
+                                <i class="bi bi-image fs-1"></i>
+                                <p class="small mb-0">Sin imagen</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-9 col-lg-10 p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h5 class="fw-bold mb-1">{{ pedido.producto.nombre }}</h5>
+                                    <p class="text-muted small mb-0"><i class="bi bi-shop me-1"></i>Vendido por <span class="fw-bold text-dark">{{ pedido.producto.tienda.nombre }}</span></p>
+                                </div>
+                                <div class="text-end">
+                                    {% if pedido.estado == 'P' %}
+                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-hourglass-split me-1"></i>Pendiente</span>
+                                    {% elif pedido.estado == 'C' %}
+                                    <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i>Completado</span>
+                                    {% elif pedido.estado == 'R' %}
+                                    <span class="badge bg-danger rounded-pill px-3 py-2"><i class="bi bi-x-circle-fill me-1"></i>Rechazado</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <hr class="my-3 border-light">
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Fecha de compra</small>
+                                    <span class="fw-medium">{{ pedido.fecha_creacion|date:"d M Y, H:i" }}</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Cantidad</small>
+                                    <span class="fw-medium">{{ pedido.cantidad }} unidad{% if pedido.cantidad > 1 %}es{% endif %}</span>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <small class="text-muted d-block">Total Pagado</small>
+                                    <span class="fs-5 fw-bold text-primary">${{ pedido.producto.precio|intcomma }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+        <i class="bi bi-cart-x fs-1 text-muted opacity-25 mb-3"></i>
+        <h3 class="text-muted">Aún no has realizado compras</h3>
+        <p class="text-muted mb-4">¡Descubre productos únicos hechos a mano!</p>
+        <a href="{% url 'catalogo' %}" class="btn btn-primary btn-lg shadow-sm">
+            <i class="bi bi-search me-2"></i>Explorar Catálogo
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

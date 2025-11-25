@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmar Eliminación - Marketplace Artesanal{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header text-white p-4 text-center border-0"
+                    style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                    <i class="bi bi-exclamation-triangle-fill fs-1 mb-3 d-block"></i>
+                    <h2 class="font-heading mb-0">¿Estás seguro?</h2>
+                </div>
+                <div class="card-body p-5 text-center">
+                    <p class="lead mb-4">¿Deseas eliminar el producto <strong class="text-danger">"{{ producto.nombre }}"</strong>?</p>
+
+                    {% if producto.imagen %}
+                    <div class="mb-4">
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}"
+                            class="img-fluid rounded-3 shadow-sm" style="max-height: 200px; object-fit: cover;">
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-warning border-0 shadow-sm mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <strong>Advertencia:</strong> Esta acción no se puede deshacer.
+                    </div>
+
+                    <form method="POST" class="d-grid gap-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg shadow-sm">
+                            <i class="bi bi-trash-fill me-2"></i>Sí, eliminar producto
+                        </button>
+                        <a href="{% url 'mi_tienda' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

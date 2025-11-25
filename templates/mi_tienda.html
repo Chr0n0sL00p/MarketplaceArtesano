@@ -1,57 +1,97 @@
 {% extends 'base.html' %}
 {% load humanize %}
-{% block title %}Mi Tienda{% endblock %}
+{% load static %}
+
+{% block title %}Mi Tienda - Gestión{% endblock %}
+
 {% block content %}
-
-<section class="auth-section">
-    <h2>🛍️ Mi Tienda: {{ tienda.nombre }}</h2>
-    <p><strong>Ubicación:</strong> {{ tienda.ubicacion }}</p>
-    <p><strong>Descripción:</strong> {{ tienda.descripcion }}</p>
-
-    {% if notificaciones > 0 %}
-    <p style="color:red; font-weight:bold;">
-        ⚠️ Tienes {{ notificaciones }} nueva{% if notificaciones > 1 %}s{% endif %} venta{% if notificaciones > 1 %}s{% endif %} sin revisar.
-    </p>
-    {% endif %}
-
-    <div style="text-align:center; margin: 35px 0 30px 0;">
-        <a href="{% url 'crear_producto' %}" class="btn" style="width: auto; padding: 12px 30px;">+ Agregar Producto</a>
+<div class="container mt-5 mb-5">
+    <!-- Encabezado de la Tienda -->
+    <div class="card border-0 shadow-lg rounded-4 mb-5 overflow-hidden">
+        <div class="card-body p-5 bg-primary-gradient text-white">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="display-4 fw-bold font-heading mb-2"><i class="bi bi-shop me-3"></i>{{ tienda.nombre }}
+                    </h1>
+                    <p class="lead opacity-75 mb-0"><i class="bi bi-geo-alt-fill me-2"></i>{{ tienda.ubicacion }}</p>
+                </div>
+                <a href="{% url 'crear_producto' %}"
+                    class="btn btn-light text-primary fw-bold shadow-sm px-4 py-2 rounded-pill hover-scale">
+                    <i class="bi bi-plus-circle-fill me-2"></i>Agregar Producto
+                </a>
+            </div>
+            <hr class="my-4 border-white opacity-25">
+            <p class="mb-0 fs-5">{{ tienda.descripcion }}</p>
+        </div>
     </div>
 
-    <hr>
-
-    <h3>Mis productos</h3>
+    <!-- Lista de Productos -->
+    <div class="d-flex align-items-center mb-4">
+        <h3 class="font-heading mb-0 text-primary"><i class="bi bi-box-seam me-2"></i>Mis Productos</h3>
+        <span class="badge bg-light text-dark border ms-3">{{ productos.count }} productos</span>
+    </div>
 
     {% if productos %}
-    <div class="productos-grid">
+    <div class="row g-4">
         {% for producto in productos %}
-        <div class="producto-card">
-            {% if producto.imagen %}
-            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-            {% else %}
-            <div style="width:150px; height:150px; background:#e0e0e0; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#999; flex-shrink:0;">
-                Sin imagen
-            </div>
-            {% endif %}
-            
-            <div class="producto-info">
-                <h3>{{ producto.nombre }}</h3>
-                <p>{{ producto.descripcion|truncatewords:20 }}</p>
-                <p class="precio">$ {{ producto.precio|intcomma }}</p>
-
-                <div class="acciones">
-                    <a href="{% url 'editar_producto' producto.id %}" class="btn btn-edit">✏️ Editar</a>
-                    <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-delete"
-                        onclick="return confirm('¿Eliminar este producto?');">🗑️ Eliminar</a>
-                    <a href="{% url 'simular_venta' producto.id %}" class="btn btn-success">💰 Simular venta</a>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-scale rounded-4">
+                <div class="position-relative">
+                    {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}"
+                        style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="d-flex justify-content-center align-items-center bg-light text-muted"
+                        style="height: 200px;">
+                        <i class="bi bi-image fs-1 opacity-50"></i>
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute top-0 end-0 p-2">
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm rounded-circle shadow-sm" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                                <li><a class="dropdown-item" href="{% url 'editar_producto' producto.id %}"><i
+                                            class="bi bi-pencil me-2 text-warning"></i>Editar</a></li>
+                                <li><a class="dropdown-item text-danger"
+                                        href="{% url 'eliminar_producto' producto.id %}"
+                                        onclick="return confirm('¿Estás seguro de eliminar este producto?');"><i
+                                            class="bi bi-trash me-2"></i>Eliminar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-dark">{{ producto.nombre }}</h5>
+                    <p class="card-text text-muted small">{{ producto.descripcion|truncatewords:15 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h4 class="text-primary mb-0 fw-bold">${{ producto.precio|intcomma }}</h4>
+                        <span
+                            class="badge {% if producto.stock > 0 %}bg-success{% else %}bg-danger{% endif %} rounded-pill">{{
+                            producto.stock }} en stock</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-top-0 pb-3 pt-0">
+                    <a href="{% url 'simular_pedido' producto.id %}"
+                        class="btn btn-outline-primary w-100 btn-sm rounded-pill">
+                        <i class="bi bi-eye me-1"></i> Ver como comprador
+                    </a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <p style="text-align:center; color:#666; margin:40px 0;">No tienes productos aún. ¡Agrega el primero!</p>
+    <div class="text-center py-5 bg-light rounded-4 border border-dashed">
+        <i class="bi bi-shop-window fs-1 text-muted opacity-50 mb-3"></i>
+        <h3 class="text-muted">Tu tienda está vacía</h3>
+        <p class="text-muted mb-4">¡Es hora de subir tu primera creación!</p>
+        <a href="{% url 'crear_producto' %}" class="btn btn-primary btn-lg shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i>Agregar Primer Producto
+        </a>
+    </div>
     {% endif %}
-</section>
-
+</div>
 {% endblock %}

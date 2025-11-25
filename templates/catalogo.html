@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogo de Productos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Catálogo de Productos</h1>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{% url 'catalogo' %}">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" name="q" class="form-control" placeholder="Buscar productos..."
+                            value="{{ query }}">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="categoria" class="form-select">
+                            <option value="">Todas las categorías</option>
+                            {% for cat in categorias %}
+                            <option value="{{ cat.id }}" {% if cat.id|stringformat:"s"==categoria_seleccionada %}selected{% endif %}>
+                                {{ cat.nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="orden" class="form-select">
+                            <option value="-fecha_creacion" {% if orden=='-fecha_creacion' %}selected{% endif %}>Más
+                                recientes</option>
+                            <option value="precio_asc" {% if orden=='precio_asc' %}selected{% endif %}>Precio: menor a
+                                mayor</option>
+                            <option value="precio_desc" {% if orden=='precio_desc' %}selected{% endif %}>Precio: mayor a
+                                menor</option>
+                            <option value="nombre" {% if orden=='nombre' %}selected{% endif %}>Nombre A-Z</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for producto in page_obj %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}"
+                    style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="d-flex justify-content-center align-items-center"
+                    style="height: 200px; background-color: #f8f9fa;">
+                    <span class="text-muted">Sin imagen</span>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text">{{ producto.descripcion|truncatewords:15 }}</p>
+                    <h6 class="card-subtitle mb-2 text-muted">${{ producto.precio }}</h6>
+                    <p class="text-muted"><small>Stock: {{ producto.stock }}</small></p>
+                    <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-primary">Ver Detalles</a>
+                </div>
+                <div class="card-footer text-muted">
+                    Tienda: {{ producto.tienda.nombre }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col">
+            <p>No hay productos disponibles.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}&q={{ query }}&categoria={{ categoria_seleccionada }}&orden={{ orden }}">Anterior</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ num }}&q={{ query }}&categoria={{ categoria_seleccionada }}&orden={{ orden }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?page={{ page_obj.next_page_number }}&q={{ query }}&categoria={{ categoria_seleccionada }}&orden={{ orden }}">Siguiente</a>
+                </li>
+                {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

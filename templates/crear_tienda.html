@@ -1,30 +1,72 @@
 {% extends 'base.html' %}
-{% block title %}Crear Tienda{% endblock %}
+{% load static %}
+
+{% block title %}Crear Tienda - Marketplace Artesanal{% endblock %}
+
 {% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-primary-gradient text-white p-4 text-center border-0">
+                    <h2 class="font-heading mb-0"><i class="bi bi-shop-window me-2"></i>Crear mi Tienda</h2>
+                    <p class="mb-0 opacity-75">Configura tu espacio para empezar a vender</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" id="tiendaForm">
+                        {% csrf_token %}
 
-<section class="auth-section">
-    <h2>🛍️ Crear mi Tienda</h2>
-    <p class="subtext">Completa los datos para crear tu tienda artesanal.</p>
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
 
-    <form method="POST">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="nombre">Nombre de la tienda</label>
-            <input type="text" name="nombre" id="nombre" required placeholder="Ej: Artesanías del Valle">
+                        <div class="mb-4">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold text-secondary">Nombre
+                                de la Tienda</label>
+                            {{ form.nombre }}
+                            {% if form.nombre.errors %}
+                            <div class="text-danger small mt-1">{{ form.nombre.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.descripcion.id_for_label }}"
+                                class="form-label fw-bold text-secondary">Descripción</label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.errors %}
+                            <div class="text-danger small mt-1">{{ form.descripcion.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.ubicacion.id_for_label }}"
+                                class="form-label fw-bold text-secondary">Ubicación</label>
+                            {{ form.ubicacion }}
+                            {% if form.ubicacion.errors %}
+                            <div class="text-danger small mt-1">{{ form.ubicacion.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                                <i class="bi bi-rocket-takeoff me-2"></i>Lanzar Tienda
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
+    </div>
+</div>
 
-        <div class="form-group">
-            <label for="descripcion">Descripción</label>
-            <textarea name="descripcion" id="descripcion" rows="3" placeholder="Describe tus productos..."></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="ubicacion">Ubicación</label>
-            <input type="text" name="ubicacion" id="ubicacion" placeholder="Ej: Valparaíso, Chile" required>
-        </div>
-
-        <button type="submit" class="btn">Crear Tienda</button>
-    </form>
-</section>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputs = document.querySelectorAll('#tiendaForm input, #tiendaForm textarea, #tiendaForm select');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+    });
+</script>
 {% endblock %}

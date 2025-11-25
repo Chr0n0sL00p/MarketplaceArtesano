@@ -1,50 +1,82 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Inicio{% endblock %}
+{% block title %}Inicio - Marketplace Artesanal{% endblock %}
 
 {% block content %}
-
-<!-- HERO BANNER -->
-<section class="hero-banner">
-    <h1>Bienvenido al Marketplace Artesanal</h1>
-    <p>Creaciones únicas hechas con amor por artesanos locales</p>
-</section>
-
-<!-- PRODUCTOS DESTACADOS -->
-<section class="destacados">
-    <h2> Productos Destacados</h2>
-
-    <div class="destacados-grid">
-
-        <!-- Tarjeta 1 -->
-        <div class="destacado-card">
-            <div class="img-wrapper">
-                <img src="{% static 'img/Collar.jpg' %}" alt="Collar artesanal">
-            </div>
-            <h3>Collar artesanal</h3>
-            <p>Hecho con piedras naturales seleccionadas.</p>
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Descubre la Magia de lo Hecho a Mano</h1>
+        <p class="lead mb-4 opacity-75">Conecta con artesanos locales y encuentra piezas únicas llenas de historia.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'catalogo' %}" class="btn btn-light btn-lg text-primary fw-bold px-4 shadow-sm">Explorar
+                Catálogo</a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'registro_artesano' %}" class="btn btn-outline-light btn-lg px-4">Vender mis Creaciones</a>
+            {% endif %}
         </div>
-
-        <!-- Tarjeta 2 -->
-        <div class="destacado-card">
-            <div class="img-wrapper">
-                <img src="{% static 'img/Pulsera.jpg' %}" alt="Pulsera artesanal">
-            </div>
-            <h3>Pulsera artesanal</h3>
-            <p>Diseñada por artesanos locales con materiales reciclados.</p>
-        </div>
-
-        <!-- Tarjeta 3 -->
-        <div class="destacado-card">
-            <div class="img-wrapper">
-                <img src="{% static 'img/Taza.jpg' %}" alt="Taza cerámica">
-            </div>
-            <h3>Taza de cerámica</h3>
-            <p>Pintada a mano con diseños únicos.</p>
-        </div>
-
     </div>
 </section>
 
+<!-- Categorías Destacadas (Simulado) -->
+<div class="container mb-5">
+    <h2 class="text-center mb-4 font-heading text-primary">Categorías Populares</h2>
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4 col-lg-3">
+            <div class="card h-100 text-center p-0 hover-scale border-0 shadow-sm overflow-hidden">
+                <div
+                    style="height: 150px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-palette fs-1 text-primary"></i>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Arte y Pintura</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-3">
+            <div class="card h-100 text-center p-0 hover-scale border-0 shadow-sm overflow-hidden">
+                <img src="{% static 'img/collar.jpg' %}" class="card-img-top" alt="Joyería"
+                    style="height: 150px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">Joyería</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-3">
+            <div class="card h-100 text-center p-0 hover-scale border-0 shadow-sm overflow-hidden">
+                <img src="{% static 'img/pulsera.jpg' %}" class="card-img-top" alt="Accesorios"
+                    style="height: 150px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">Accesorios</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Llamada a la Acción -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <h2 class="font-heading mb-3">¿Eres Artesano?</h2>
+                <p class="lead text-muted">Únete a nuestra comunidad y lleva tu talento a miles de compradores que
+                    valoran el trabajo manual.</p>
+                <ul class="list-unstyled mt-4">
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Crea tu propia tienda
+                        virtual gratis</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Gestiona tus productos
+                        fácilmente</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Recibe pagos seguros</li>
+                </ul>
+                <a href="{% url 'registro_artesano' %}" class="btn btn-primary mt-3">Comenzar a Vender</a>
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="{% static 'img/taza.jpg' %}" alt="Artesanía local" class="img-fluid rounded-4 shadow-lg"
+                    style="max-height: 400px; object-fit: cover;">
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
