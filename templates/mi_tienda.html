@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
-{% load humanize %}
-{% load static %}
+{% load core_extras %}
 
-{% block title %}Mi Tienda - Gestión{% endblock %}
+{% block title %}Mi Tienda{% endblock %}
 
 {% block content %}
 <div class="container mt-5 mb-5">
@@ -56,8 +55,7 @@
                                 <li><a class="dropdown-item" href="{% url 'editar_producto' producto.id %}"><i
                                             class="bi bi-pencil me-2 text-warning"></i>Editar</a></li>
                                 <li><a class="dropdown-item text-danger"
-                                        href="{% url 'eliminar_producto' producto.id %}"
-                                        onclick="return confirm('¿Estás seguro de eliminar este producto?');"><i
+                                        href="{% url 'eliminar_producto' producto.id %}"><i
                                             class="bi bi-trash me-2"></i>Eliminar</a></li>
                             </ul>
                         </div>
@@ -67,10 +65,10 @@
                     <h5 class="card-title fw-bold text-dark">{{ producto.nombre }}</h5>
                     <p class="card-text text-muted small">{{ producto.descripcion|truncatewords:15 }}</p>
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                        <h4 class="text-primary mb-0 fw-bold">${{ producto.precio|intcomma }}</h4>
+                        <h4 class="text-primary mb-0 fw-bold">${{ producto.precio|price }}</h4>
                         <span
-                            class="badge {% if producto.stock > 0 %}bg-success{% else %}bg-danger{% endif %} rounded-pill">{{
-                            producto.stock }} en stock</span>
+                            class="badge {% if producto.stock > 0 %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+                            Cantidad: {{ producto.stock }}</span>
                     </div>
                 </div>
                 <div class="card-footer bg-white border-top-0 pb-3 pt-0">
@@ -93,5 +91,94 @@
         </a>
     </div>
     {% endif %}
+
+    {% if productos.has_other_pages %}
+    <nav aria-label="Paginación de productos" class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if productos.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ productos.previous_page_number }}" aria-label="Anterior">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
+            {% endif %}
+
+            {% for num in productos.paginator.page_range %}
+            {% if productos.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if productos.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ productos.next_page_number }}" aria-label="Siguiente">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&raquo;</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    <!-- Lista de Pedidos -->
+    <div class="d-flex align-items-center mt-5 mb-4">
+        <h3 class="font-heading mb-0 text-primary"><i class="bi bi-receipt me-2"></i>Pedidos Recibidos</h3>
+        <span class="badge bg-light text-dark border ms-3">{{ pedidos.count }} en total</span>
+    </div>
+
+    {% if pedidos %}
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Comprador</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col" class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pedido in pedidos %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'detalle_producto' pedido.producto.id %}">{{ pedido.producto.nombre }}</a>
+                            </td>
+                            <td>{{ pedido.comprador.username }}</td>
+                            <td>{{ pedido.fecha_creacion|date:"d M Y" }}</td>
+                            <td>
+                                <span class="badge bg-{{ pedido.get_estado_display|lower }}">{{ pedido.get_estado_display }}</span>
+                            </td>
+                            <td class="text-end">
+                                {% if pedido.estado == 'P' %}
+                                <a href="{% url 'actualizar_estado_pedido' pedido.id 'C' %}" class="btn btn-success btn-sm">Completar</a>
+                                <a href="{% url 'actualizar_estado_pedido' pedido.id 'R' %}" class="btn btn-danger btn-sm">Rechazar</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5 bg-light rounded-4 border border-dashed">
+        <h3 class="text-muted">No has recibido pedidos aún.</h3>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

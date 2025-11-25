@@ -1,7 +1,25 @@
 # core/forms.py
 from django import forms
-from .models import Tienda, Producto, Categoria
+from .models import Tienda, Producto, Categoria, ResenaDeProducto
 from django.utils.text import slugify
+
+class ResenaDeProductoForm(forms.ModelForm):
+    calificacion = forms.ChoiceField(
+        choices=[(i, str(i)) for i in range(1, 6)],
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Calificación'
+    )
+
+    class Meta:
+        model = ResenaDeProducto
+        fields = ['calificacion', 'comentario']
+        widgets = {
+            'comentario': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Escribe tu reseña aquí...'}),
+        }
+        labels = {
+            'comentario': 'Comentario',
+        }
+
 
 class TiendaForm(forms.ModelForm):
     """

@@ -55,6 +55,7 @@ class Producto(models.Model):
     stock = models.IntegerField(default=1)
     imagen = models.ImageField(upload_to='productos/', null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    activo = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nombre
@@ -70,13 +71,14 @@ class Pedido(models.Model):
     ESTADOS = (
         ('P', 'Pendiente'),
         ('C', 'Completado'),
+        ('CA', 'Cancelado'),
         ('R', 'Rechazado'),
     )
     comprador = models.ForeignKey(User, related_name='pedidos', on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT) # Usar PROTECT es buena idea para no borrar pedidos si se borra un producto
     cantidad = models.PositiveIntegerField(default=1)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    estado = models.CharField(max_length=1, choices=ESTADOS, default='P')
+    estado = models.CharField(max_length=2, choices=ESTADOS, default='P')
     # NOTA: Este modelo es simple. Un sistema real usaría un modelo 'Pedido' y 'DetallePedido' para soportar múltiples productos en una orden.
 
     def __str__(self):
@@ -134,10 +136,16 @@ class Favorito(models.Model):
         return f"{self.usuario.username} ► {self.producto.nombre}"
 
 class Notificacion(models.Model):
+    TIPO_CHOICES = [
+        ('pedido', 'Pedido'),
+        ('reseña', 'Reseña'),
+        ('general', 'General'),
+    ]
     usuario = models.ForeignKey(User, related_name='notificaciones', on_delete=models.CASCADE)
     mensaje = models.CharField(max_length=255)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     leida = models.BooleanField(default=False)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='general')
 
     def __str__(self):
         return f"Notificación para {self.usuario.username} — {self.mensaje[:30]}"

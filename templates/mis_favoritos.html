@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load humanize %}
+{% load core_extras %}
 
-{% block title %}Mis Favoritos - Marketplace Artesanal{% endblock %}
+{% block title %}Mis Favoritos{% endblock %}
 
 {% block content %}
 <div class="container mt-5 mb-5">
@@ -38,7 +37,7 @@
                     <p class="card-text text-muted small mb-3 flex-grow-1">{{ favorito.producto.descripcion|truncatewords:12 }}</p>
 
                     <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
-                        <span class="fs-5 fw-bold text-primary">${{ favorito.producto.precio|intcomma }}</span>
+                        <span class="fs-5 fw-bold text-primary">${{ favorito.producto.precio|price }}</span>
                         <a href="{% url 'detalle_producto' favorito.producto.id %}"
                             class="btn btn-outline-primary btn-sm rounded-pill">Ver Detalles</a>
                     </div>

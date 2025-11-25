@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('catalogo/', views.catalogo, name='catalogo'),
     path('producto/<int:producto_id>/', views.detalle_producto, name='detalle_producto'),
+    path('producto/<int:producto_id>/crear_resena/', views.crear_resena, name='crear_resena'),
 
     # Autenticación
     path('login/', views.login_usuario, name='login'),
@@ -22,10 +23,12 @@ urlpatterns = [
     path('tienda/producto/crear/', views.crear_producto, name='crear_producto'),
     path('tienda/producto/<int:producto_id>/editar/', views.editar_producto, name='editar_producto'),
     path('tienda/producto/<int:producto_id>/eliminar/', views.eliminar_producto, name='eliminar_producto'),
+    path('pedido/actualizar/<int:pedido_id>/<str:nuevo_estado>/', views.actualizar_estado_pedido, name='actualizar_estado_pedido'),
     
     # Pedidos
     path('pedido/<int:producto_id>/', views.simular_pedido, name='simular_pedido'),
     path('mis-pedidos/', views.mis_pedidos, name='mis_pedidos'),
+    path('pedido/cancelar/<int:pedido_id>/', views.cancelar_pedido, name='cancelar_pedido'),
     
     # Favoritos
     path('favorito/toggle/<int:producto_id>/', views.toggle_favorito, name='toggle_favorito'),

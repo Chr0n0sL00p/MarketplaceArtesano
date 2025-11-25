@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load core_extras %}
 
 {% block title %}Catálogo de Productos{% endblock %}
 
@@ -65,7 +66,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ producto.nombre }}</h5>
                     <p class="card-text">{{ producto.descripcion|truncatewords:15 }}</p>
-                    <h6 class="card-subtitle mb-2 text-muted">${{ producto.precio }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">${{ producto.precio|price }}</h6>
                     <p class="text-muted"><small>Stock: {{ producto.stock }}</small></p>
                     <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-primary">Ver Detalles</a>
                 </div>
