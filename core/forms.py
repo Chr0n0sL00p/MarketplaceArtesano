@@ -22,9 +22,6 @@ class ResenaDeProductoForm(forms.ModelForm):
 
 
 class TiendaForm(forms.ModelForm):
-    """
-    Formulario para la creación y edición de una Tienda.
-    """
     class Meta:
         model = Tienda
         fields = ['nombre', 'descripcion', 'ubicacion']
@@ -40,10 +37,6 @@ class TiendaForm(forms.ModelForm):
         }
 
 class ProductoForm(forms.ModelForm):
-    """
-    Formulario para la creación y edición de un Producto, con la capacidad
-    de crear una nueva categoría dinámicamente.
-    """
     categoria = forms.ModelChoiceField(
         queryset=Categoria.objects.all(),
         required=False,
@@ -86,19 +79,15 @@ class ProductoForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
-        # Primero, gestionamos la categoría
         nueva_categoria_nombre = self.cleaned_data.get('nueva_categoria', '').strip()
         
         if nueva_categoria_nombre:
-            # Si el usuario escribió una nueva categoría, la creamos o la obtenemos si ya existe
             categoria, _ = Categoria.objects.get_or_create(
                 nombre=nueva_categoria_nombre,
                 defaults={'slug': slugify(nueva_categoria_nombre)}
             )
-            # Asignamos esta categoría a la instancia del producto
             self.instance.categoria = categoria
         
-        # Eliminamos 'nueva_categoria' de los datos del formulario ya que no es un campo del modelo Producto
         if 'nueva_categoria' in self.cleaned_data:
             del self.cleaned_data['nueva_categoria']
 

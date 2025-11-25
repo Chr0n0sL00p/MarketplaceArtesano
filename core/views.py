@@ -15,14 +15,12 @@ logger = logging.getLogger(__name__)
 from .models import Tienda, Perfil, Producto, Pedido, Categoria, ResenaDeProducto, Favorito, Notificacion
 from .forms import TiendaForm, ProductoForm, ResenaDeProductoForm
 
-# --- Vistas Públicas y de Comprador ---
+
 
 def home(request):
-    """Página de inicio principal."""
     return render(request, 'home.html')
 
 def catalogo(request):
-    """Muestra todos los productos disponibles con filtros, búsqueda y paginación."""
     productos = Producto.objects.select_related('tienda', 'categoria').filter(activo=True)
     query = request.GET.get('q', '')
     if query:
@@ -61,7 +59,6 @@ def catalogo(request):
     return render(request, 'catalogo_fixed.html', context)
 
 def detalle_producto(request, producto_id):
-    """Muestra los detalles de un producto específico."""
     producto = get_object_or_404(Producto, id=producto_id)
     resenas = producto.resenas.filter(activa=True).order_by('-fecha_creacion')
     es_favorito = False
@@ -92,12 +89,10 @@ def detalle_producto(request, producto_id):
 def crear_resena(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     if request.method == 'POST':
-        # Verificar que el artesano no pueda reseñar su propio producto
         if producto.tienda.artesano.user == request.user:
             messages.error(request, "No puedes reseñar tu propio producto.")
             return redirect('detalle_producto', producto_id=producto_id)
 
-        # Verificar que el usuario no haya reseñado ya este producto
         if ResenaDeProducto.objects.filter(producto=producto, autor=request.user).exists():
             messages.error(request, "Ya has enviado una reseña para este producto.")
             return redirect('detalle_producto', producto_id=producto_id)
@@ -111,7 +106,6 @@ def crear_resena(request, producto_id):
             messages.success(request, "Tu reseña ha sido enviada con éxito.")
             return redirect('detalle_producto', producto_id=producto_id)
         else:
-            # Si el formulario no es válido, volvemos a renderizar la página del producto con el formulario y sus errores.
             resenas = producto.resenas.filter(activa=True).order_by('-fecha_creacion')
             es_favorito = False
             user_has_reviewed = False
@@ -126,7 +120,7 @@ def crear_resena(request, producto_id):
                 'producto': producto,
                 'resenas': resenas,
                 'es_favorito': es_favorito,
-                'resena_form': form, # Pasamos el formulario con errores
+                'resena_form': form,
                 'user_has_reviewed': user_has_reviewed,
                 'is_artisan_owner': is_artisan_owner,
             }
@@ -136,10 +130,9 @@ def crear_resena(request, producto_id):
     return redirect('detalle_producto', producto_id=producto_id)
 
 
-# --- Vistas de Autenticación y Registro ---
+
 
 def login_usuario(request):
-    """Maneja el inicio de sesión para todos los usuarios."""
     if request.method == 'POST':
         username = request.POST.get('usuario')
         password = request.POST.get('contraseña')
@@ -159,13 +152,11 @@ def login_usuario(request):
     return render(request, 'login.html')
 
 def logout_usuario(request):
-    """Cierra la sesión del usuario."""
     logout(request)
     messages.info(request, "Has cerrado sesión correctamente.")
     return redirect('login')
 
 def registro_artesano(request):
-    """Registra un nuevo usuario con el rol de Artesano."""
     if request.method == 'POST':
         usuario = request.POST.get('usuario')
         email = request.POST.get('email')
@@ -195,7 +186,6 @@ def registro_artesano(request):
     return render(request, 'registro_artesano.html')
 
 def registro_comprador(request):
-    """Registra un nuevo usuario con el rol de Comprador."""
     if request.method == 'POST':
         usuario = request.POST.get('usuario')
         email = request.POST.get('email')
@@ -224,7 +214,7 @@ def registro_comprador(request):
         return redirect('login')
     return render(request, 'registro_comprador.html')
 
-# --- Vistas de Artesanos (Gestión de Tienda y Productos) ---
+
 
 @login_required
 def crear_tienda(request):
@@ -309,29 +299,24 @@ def eliminar_producto(request, producto_id):
 
 @login_required
 def actualizar_estado_pedido(request, pedido_id, nuevo_estado):
-    # Asegurarse de que el usuario es un artesano
     if not hasattr(request.user, 'perfil') or request.user.perfil.rol != 'artesano':
         messages.error(request, "No tienes permiso para realizar esta acción.")
         return redirect('home')
 
     pedido = get_object_or_404(Pedido, id=pedido_id)
 
-    # Verificar que el artesano es el dueño del producto del pedido
     if pedido.producto.tienda.artesano != request.user.perfil:
         messages.error(request, "No puedes modificar un pedido que no te pertenece.")
         return redirect('mi_tienda')
 
-    # Validar que el nuevo estado sea uno de los permitidos
     estados_validos = [estado[0] for estado in Pedido.ESTADOS]
     if nuevo_estado not in estados_validos:
         messages.error(request, f"Estado '{nuevo_estado}' no es válido.")
         return redirect('mi_tienda')
 
-    # Actualizar el estado
     pedido.estado = nuevo_estado
     pedido.save()
 
-    # Si se rechaza, devolver el stock
     if nuevo_estado == 'R':
         producto = pedido.producto
         producto.stock += pedido.cantidad
@@ -342,7 +327,6 @@ def actualizar_estado_pedido(request, pedido_id, nuevo_estado):
     else:
         mensaje_notificacion = f"El estado de tu pedido de {pedido.producto.nombre} ha cambiado a {pedido.get_estado_display()}."
 
-    # Notificar al comprador (si no es el mismo artesano)
     if pedido.comprador != pedido.producto.tienda.artesano.user:
         Notificacion.objects.create(
             usuario=pedido.comprador,
@@ -357,7 +341,6 @@ def actualizar_estado_pedido(request, pedido_id, nuevo_estado):
 def simular_pedido(request, producto_id):
     """Crea un pedido verificando stock disponible."""
     producto = get_object_or_404(Producto, id=producto_id)
-    # Validar que el artesano no pueda comprar su propio producto
     if request.user.is_authenticated and hasattr(request.user, 'perfil') and request.user.perfil.rol == 'artesano':
         if producto.tienda.artesano.user == request.user:
             messages.error(request, "No puedes comprar tu propio producto.")
@@ -379,26 +362,21 @@ def simular_pedido(request, producto_id):
 
 @login_required
 def mis_pedidos(request):
-    """Muestra los pedidos del comprador."""
     pedidos = Pedido.objects.filter(comprador=request.user).select_related('producto__tienda').order_by('-fecha_creacion')
     return render(request, 'mis_pedidos.html', {'pedidos': pedidos})
 
 @login_required
 def cancelar_pedido(request, pedido_id):
-    """Permite a un comprador cancelar un pedido pendiente."""
     pedido = get_object_or_404(Pedido, id=pedido_id, comprador=request.user)
     
     if pedido.estado == 'P':
-        # Restituir el stock del producto
         producto = pedido.producto
         producto.stock += pedido.cantidad
         producto.save()
         
-        # Cambiar el estado del pedido a 'Cancelado'
         pedido.estado = 'CA'
         pedido.save()
         
-        # (Opcional) Notificar al artesano de la cancelación
         Notificacion.objects.create(
             usuario=producto.tienda.artesano.user,
             mensaje=f"El pedido #{pedido.id} de {producto.nombre} fue cancelado por el comprador.",
@@ -411,11 +389,10 @@ def cancelar_pedido(request, pedido_id):
         
     return redirect('mis_pedidos')
 
-# --- Vistas de Favoritos ---
+
 
 @login_required
 def toggle_favorito(request, producto_id):
-    """Agrega o quita un producto de favoritos."""
     producto = get_object_or_404(Producto, id=producto_id)
     favorito = Favorito.objects.filter(usuario=request.user, producto=producto).first()
     if favorito:
@@ -428,25 +405,22 @@ def toggle_favorito(request, producto_id):
 
 @login_required
 def mis_favoritos(request):
-    """Muestra los productos favoritos del usuario."""
     favoritos = Favorito.objects.filter(usuario=request.user).select_related('producto__tienda')
     return render(request, 'mis_favoritos.html', {'favoritos': favoritos})
 
-# --- Vistas de Notificaciones ---
+
 
 @login_required
 def mis_notificaciones(request):
-    """Muestra las notificaciones del usuario."""
     notificaciones = Notificacion.objects.filter(usuario=request.user).order_by('-fecha_creacion')
     notificaciones.filter(leida=False).update(leida=True)
     return render(request, 'mis_notificaciones.html', {'notificaciones': notificaciones})
 
-# --- Vista de Administración ---
+
 
 @login_required
 @staff_member_required
 def admin_dashboard(request):
-    """Muestra un panel de administración con estadísticas del sitio."""
     total_usuarios = User.objects.count()
     total_productos = Producto.objects.count()
     total_tiendas = Tienda.objects.count()

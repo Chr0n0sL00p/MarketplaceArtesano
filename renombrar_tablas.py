@@ -1,6 +1,5 @@
 import pymysql
 
-# Conectar a la base de datos
 conn = pymysql.connect(
     host='localhost',
     user='root',
@@ -10,7 +9,6 @@ conn = pymysql.connect(
 
 cursor = conn.cursor()
 
-# Tablas a renombrar
 tablas_renombrar = [
     ('proyectoapp_favorito', 'core_favorito'),
     ('proyectoapp_pedido', 'core_pedido'),
@@ -20,7 +18,6 @@ tablas_renombrar = [
     ('proyectoapp_tienda', 'core_tienda'),
 ]
 
-# Eliminar tablas core duplicadas si existen
 tablas_eliminar = ['core_categoria', 'core_perfil', 'core_notificacion']
 for tabla in tablas_eliminar:
     try:
@@ -29,7 +26,6 @@ for tabla in tablas_eliminar:
     except Exception as e:
         print(f"Error eliminando {tabla}: {e}")
 
-# Renombrar tablas de proyectoapp_ a core_
 tablas_renombrar_completo = [
     ('proyectoapp_categoria', 'core_categoria'),
     ('proyectoapp_perfil', 'core_perfil'),
