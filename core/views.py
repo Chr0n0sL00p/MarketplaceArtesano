@@ -181,7 +181,7 @@ def registro_artesano(request):
             return redirect('registro_artesano')
         user = User.objects.create_user(username=usuario, email=email, password=contraseña)
         Perfil.objects.create(user=user, rol='artesano')
-        messages.success(request, "Registro de artesano exitoso. Ahora puedes iniciar sesión.")
+        messages.success(request, "¡Registro de artesano exitoso! 🎉 Ahora puedes iniciar sesión.")
         return redirect('login')
     return render(request, 'registro_artesano.html')
 
@@ -210,7 +210,7 @@ def registro_comprador(request):
             return redirect('registro_comprador')
         user = User.objects.create_user(username=usuario, email=email, password=contraseña)
         Perfil.objects.create(user=user, rol='comprador')
-        messages.success(request, "Registro de comprador exitoso. Ahora puedes iniciar sesión.")
+        messages.success(request, "¡Registro de comprador exitoso! 🎉 Ahora puedes iniciar sesión.")
         return redirect('login')
     return render(request, 'registro_comprador.html')
 
