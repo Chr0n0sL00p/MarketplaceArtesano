@@ -92,3 +92,35 @@ class ProductoForm(forms.ModelForm):
             del self.cleaned_data['nueva_categoria']
 
         return super().save(commit)
+
+# --- NUEVOS FORMULARIOS ---
+
+from .models import SoporteTicket, MensajeChat, ReporteAbuso
+
+class SoporteTicketForm(forms.ModelForm):
+    class Meta:
+        model = SoporteTicket
+        fields = ['asunto', 'mensaje']
+        widgets = {
+            'asunto': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Resumen del problema'}),
+            'mensaje': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Describe tu problema en detalle...'}),
+        }
+
+class MensajeChatForm(forms.ModelForm):
+    class Meta:
+        model = MensajeChat
+        fields = ['texto']
+        widgets = {
+            'texto': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Escribe un mensaje...'}),
+        }
+        labels = {
+            'texto': '',
+        }
+
+class ReporteAbusoForm(forms.ModelForm):
+    class Meta:
+        model = ReporteAbuso
+        fields = ['motivo']
+        widgets = {
+            'motivo': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Explica por qué reportas esto...'}),
+        }

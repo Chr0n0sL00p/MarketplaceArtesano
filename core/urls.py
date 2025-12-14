@@ -39,4 +39,13 @@ urlpatterns = [
     
     # Admin
     path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
+
+    # Soporte y Comunicación
+    path('soporte/', views.soporte_view, name='soporte'),
+    path('chat/', views.chat_inbox, name='chat_inbox'),
+    path('chat/<int:usuario_id>/', views.chat_thread, name='chat_thread'),
+    
+    # Reportes y Moderación
+    path('reportar/<str:content_type_str>/<int:object_id>/', views.reportar_abuso, name='reportar_abuso'),
+    path('seguir-tienda/toggle/<int:tienda_id>/', views.seguir_tienda, name='seguir_tienda'),
 ]

@@ -72,6 +72,16 @@
                         {% endif %}
 
                         <li class="nav-item ms-lg-3">
+                            <a class="nav-link position-relative" href="{% url 'chat_inbox' %}" title="Chat">
+                                <i class="bi bi-chat-dots-fill"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="nav-link" href="{% url 'soporte' %}" title="Soporte"><i
+                                    class="bi bi-headset"></i></a>
+                        </li>
+
+                        <li class="nav-item ms-lg-3">
                             <a class="nav-link position-relative" href="{% url 'mis_notificaciones' %}">
                                 <i class="bi bi-bell-fill"></i>
                                 {% if notificaciones_count > 0 %}
@@ -111,6 +121,17 @@
     </header>
 
     <main class="flex-grow-1">
+        <div class="container mt-3">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %} alert-dismissible fade show"
+                role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
         {% block content %}
         {% endblock %}
     </main>

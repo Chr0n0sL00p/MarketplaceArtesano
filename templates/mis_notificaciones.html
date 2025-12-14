@@ -13,71 +13,88 @@
             </div>
 
             {% if notificaciones %}
-                {% with notificaciones_pedido=notificaciones|filter_by_type:'pedido' notificaciones_otras=notificaciones|filter_by_type:'general,reseña' %}
 
-                {# Sección de Pedidos #}
-                {% if notificaciones_pedido %}
-                <h4 class="mb-3 mt-4 text-secondary font-heading"><i class="bi bi-box-seam me-2"></i>Pedidos</h4>
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
-                    <div class="list-group list-group-flush">
-                        {% for notif in notificaciones_pedido %}
-                        <div class="list-group-item p-4 border-bottom notif-item notif-pedido {% if not notif.leida %}notif-nueva{% endif %}">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div class="d-flex">
-                                    <div class="me-3 mt-1">
-                                        <i class="bi bi-box-seam fs-4 text-primary opacity-75"></i>
-                                    </div>
-                                    <div>
-                                        <p class="mb-1 text-dark {% if not notif.leida %}fw-bold{% endif %}">{{ notif.mensaje }}</p>
-                                        <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ notif.fecha_creacion|timesince }} atrás</small>
-                                    </div>
+            {# Sección de Pedidos #}
+            {% if notificaciones_pedido %}
+            <h4 class="mb-3 mt-4 text-secondary font-heading"><i class="bi bi-box-seam me-2"></i>Pedidos</h4>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="list-group list-group-flush">
+                    {% for notif in notificaciones_pedido %}
+                    <div
+                        class="list-group-item p-4 border-bottom notif-item notif-pedido {% if not notif.leida %}notif-nueva{% endif %}">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <div class="d-flex">
+                                <div class="me-3 mt-1">
+                                    <i class="bi bi-box-seam fs-4 text-primary opacity-75"></i>
                                 </div>
-                                {% if not notif.leida %}
-                                <span class="badge bg-danger rounded-circle p-1 d-block mt-1 shadow-sm border border-white" style="width: 12px; height: 12px;"></span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-                {# Sección de Otras Notificaciones #}
-                {% if notificaciones_otras %}
-                <h4 class="mb-3 mt-4 text-secondary font-heading"><i class="bi bi-bell me-2"></i>Otras</h4>
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                    <div class="list-group list-group-flush">
-                        {% for notif in notificaciones_otras %}
-                         <div class="list-group-item p-4 border-bottom notif-item notif-general {% if not notif.leida %}notif-nueva{% endif %}">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div class="d-flex">
-                                    <div class="me-3 mt-1">
-                                        <i class="bi bi-bell fs-4 text-primary opacity-75"></i>
-                                    </div>
-                                    <div>
-                                        <p class="mb-1 text-dark {% if not notif.leida %}fw-bold{% endif %}">{{ notif.mensaje }}</p>
-                                        <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ notif.fecha_creacion|timesince }} atrás</small>
-                                    </div>
+                                <div>
+                                    <p class="mb-1 text-dark {% if not notif.leida %}fw-bold{% endif %}">
+                                        {% if notif.url %}
+                                        <a href="{{ notif.url }}"
+                                            class="text-decoration-none text-dark stretched-link">{{ notif.mensaje }}</a>
+                                        {% else %}
+                                        {{ notif.mensaje }}
+                                        {% endif %}
+                                    </p>
+                                    <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ notif.fecha_creacion|timesince }} atrás</small>
                                 </div>
-                                 {% if not notif.leida %}
-                                <span class="badge bg-danger rounded-circle p-1 d-block mt-1 shadow-sm border border-white" style="width: 12px; height: 12px;"></span>
-                                {% endif %}
                             </div>
+                            {% if not notif.leida %}
+                            <span class="badge bg-danger rounded-circle p-1 d-block mt-1 shadow-sm border border-white"
+                                style="width: 12px; height: 12px;"></span>
+                            {% endif %}
                         </div>
-                        {% endfor %}
                     </div>
+                    {% endfor %}
                 </div>
-                {% endif %}
+            </div>
+            {% endif %}
 
-                {% if not notificaciones_pedido and not notificaciones_otras %}
-                    <div class="text-center py-5 bg-white rounded-4 shadow-sm">
-                        <i class="bi bi-bell-slash fs-1 text-muted opacity-25 mb-3"></i>
-                        <h3 class="text-muted">Estás al día</h3>
-                        <p class="text-muted mb-0">No tienes nuevas notificaciones.</p>
+            {# Sección de Otras Notificaciones #}
+            {% if notificaciones_otras %}
+            <h4 class="mb-3 mt-4 text-secondary font-heading"><i class="bi bi-bell me-2"></i>Otras</h4>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="list-group list-group-flush">
+                    {% for notif in notificaciones_otras %}
+                    <div
+                        class="list-group-item p-4 border-bottom notif-item notif-general {% if not notif.leida %}notif-nueva{% endif %}">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <div class="d-flex">
+                                <div class="me-3 mt-1">
+                                    <i class="bi bi-bell fs-4 text-primary opacity-75"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-1 text-dark {% if not notif.leida %}fw-bold{% endif %}">
+                                        {% if notif.url %}
+                                        <a href="{{ notif.url }}"
+                                            class="text-decoration-none text-dark stretched-link">{{ notif.mensaje }}</a>
+                                        {% else %}
+                                        {{ notif.mensaje }}
+                                        {% endif %}
+                                    </p>
+                                    <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ notif.fecha_creacion|timesince }} atrás</small>
+                                </div>
+                            </div>
+                            {% if not notif.leida %}
+                            <span class="badge bg-danger rounded-circle p-1 d-block mt-1 shadow-sm border border-white"
+                                style="width: 12px; height: 12px;"></span>
+                            {% endif %}
+                        </div>
                     </div>
-                {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
 
-                {% endwith %}
+            {% if not notificaciones_pedido and not notificaciones_otras %}
+            <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+                <i class="bi bi-bell-slash fs-1 text-muted opacity-25 mb-3"></i>
+                <h3 class="text-muted">Estás al día</h3>
+                <p class="text-muted mb-0">No tienes nuevas notificaciones.</p>
+            </div>
+            {% endif %}
+
+
             {% else %}
             <div class="text-center py-5 bg-white rounded-4 shadow-sm">
                 <i class="bi bi-bell-slash fs-1 text-muted opacity-25 mb-3"></i>
@@ -93,15 +110,20 @@
     .notif-item {
         transition: background-color 0.3s ease;
     }
+
     .notif-nueva {
-        background-color: #f8f9fa; /* Un color suave para no leídas */
+        background-color: #f8f9fa;
+        /* Un color suave para no leídas */
         background-color: rgba(106, 17, 203, 0.03);
     }
+
     .notif-item:hover {
         background-color: rgba(106, 17, 203, 0.06) !important;
     }
+
     .font-heading {
-        font-family: 'Poppins', sans-serif; /* Asegúrate de tener esta fuente o elige otra */
+        font-family: 'Poppins', sans-serif;
+        /* Asegúrate de tener esta fuente o elige otra */
         font-weight: 600;
     }
 </style>

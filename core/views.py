@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -10,10 +11,12 @@ from django.db.models import Q, Avg, ProtectedError
 from django.contrib.admin.views.decorators import staff_member_required
 import logging
 from django.db.models.deletion import ProtectedError
+from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
 logger = logging.getLogger(__name__)
 
-from .models import Tienda, Perfil, Producto, Pedido, Categoria, ResenaDeProducto, Favorito, Notificacion
-from .forms import TiendaForm, ProductoForm, ResenaDeProductoForm
+from .models import Tienda, Perfil, Producto, Pedido, Categoria, ResenaDeProducto, Favorito, Notificacion, SoporteTicket, Conversacion, MensajeChat, ReporteAbuso, SeguirTienda
+from .forms import TiendaForm, ProductoForm, ResenaDeProductoForm, SoporteTicketForm, MensajeChatForm, ReporteAbusoForm
 
 
 
@@ -68,10 +71,12 @@ def detalle_producto(request, producto_id):
     resena_form = ResenaDeProductoForm()
     user_has_reviewed = False
     is_artisan_owner = False
+    siguiendo_tienda = False
 
     if request.user.is_authenticated:
         es_favorito = Favorito.objects.filter(usuario=request.user, producto=producto).exists()
         user_has_reviewed = ResenaDeProducto.objects.filter(producto=producto, autor=request.user).exists()
+        siguiendo_tienda = SeguirTienda.objects.filter(usuario=request.user, tienda=producto.tienda).exists()
         if hasattr(request.user, 'perfil') and request.user.perfil.rol == 'artesano':
             is_artisan_owner = (producto.tienda.artesano.user == request.user)
 
@@ -82,6 +87,7 @@ def detalle_producto(request, producto_id):
         'resena_form': resena_form,
         'user_has_reviewed': user_has_reviewed,
         'is_artisan_owner': is_artisan_owner,
+        'siguiendo_tienda': siguiendo_tienda,
     }
     return render(request, 'detalle_producto.html', context)
 
@@ -258,6 +264,20 @@ def crear_producto(request):
             producto = form.save(commit=False)
             producto.tienda = tienda
             producto.save()
+            
+            # Notificar a los seguidores
+            seguidores = SeguirTienda.objects.filter(tienda=tienda)
+            notificaciones = []
+            for seguimiento in seguidores:
+                notificaciones.append(Notificacion(
+                    usuario=seguimiento.usuario,
+                    mensaje=f"¡Nuevo en {tienda.nombre}! Han publicado: {producto.nombre}",
+                    tipo='general',
+                    url=reverse('detalle_producto', args=[producto.id])
+                ))
+            if notificaciones:
+                Notificacion.objects.bulk_create(notificaciones)
+
             messages.success(request, "Producto agregado correctamente 🎉")
             return redirect('mi_tienda')
     else:
@@ -411,10 +431,23 @@ def mis_favoritos(request):
 
 
 @login_required
+@login_required
 def mis_notificaciones(request):
     notificaciones = Notificacion.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+    
+    # Filtrar notificaciones
+    notificaciones_pedido = notificaciones.filter(tipo='pedido')
+    notificaciones_otras = notificaciones.exclude(tipo='pedido')
+    
+    # Marcar como leídas
     notificaciones.filter(leida=False).update(leida=True)
-    return render(request, 'mis_notificaciones.html', {'notificaciones': notificaciones})
+    
+    context = {
+        'notificaciones': notificaciones,
+        'notificaciones_pedido': notificaciones_pedido,
+        'notificaciones_otras': notificaciones_otras,
+    }
+    return render(request, 'mis_notificaciones.html', context)
 
 
 
@@ -424,15 +457,162 @@ def admin_dashboard(request):
     total_usuarios = User.objects.count()
     total_productos = Producto.objects.count()
     total_tiendas = Tienda.objects.count()
-    tiendas_pendientes = Tienda.objects.filter(aprobada=False).count()
+    
+    # Pendientes de moderación/atención
+    tiendas_pendientes = Tienda.objects.filter(aprobada=False)
+    resenas_pendientes = ResenaDeProducto.objects.filter(aprobada=False, activa=True)
+    tickets_pendientes = SoporteTicket.objects.filter(estado='abierto')
+    reportes_pendientes = ReporteAbuso.objects.filter(estado='pendiente')
+
     ultimos_pedidos = Pedido.objects.order_by('-fecha_creacion')[:5]
     ultimos_usuarios = User.objects.order_by('-date_joined')[:5]
+    
     context = {
         'total_usuarios': total_usuarios,
         'total_productos': total_productos,
         'total_tiendas': total_tiendas,
-        'tiendas_pendientes': tiendas_pendientes,
+        'tiendas_pendientes_count': tiendas_pendientes.count(),
+        'resenas_pendientes_count': resenas_pendientes.count(),
+        'tickets_pendientes_count': tickets_pendientes.count(),
+        'reportes_pendientes_count': reportes_pendientes.count(),
+        'tiendas_pendientes': tiendas_pendientes, # List
+        'resenas': resenas_pendientes,            # List (renamed to match template expectation if any, usually 'resenas_pendientes' is improved name but template had 'resenas')
+        'tickets': tickets_pendientes,            # List
+        'reportes': reportes_pendientes,          # List
         'ultimos_pedidos': ultimos_pedidos,
         'ultimos_usuarios': ultimos_usuarios,
     }
     return render(request, 'admin.html', context)
+
+
+# --- VISTAS DEL MÓDULO ADMINISTRATIVO Y COMUNICACIÓN ---
+
+@login_required
+def soporte_view(request):
+    """HU-14: Soporte Técnico"""
+    tickets = SoporteTicket.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+    if request.method == 'POST':
+        form = SoporteTicketForm(request.POST)
+        if form.is_valid():
+            ticket = form.save(commit=False)
+            ticket.usuario = request.user
+            ticket.save()
+            messages.success(request, "Ticket de soporte creado. Te responderemos pronto.")
+            return redirect('soporte')
+    else:
+        form = SoporteTicketForm()
+    return render(request, 'soporte.html', {'form': form, 'tickets': tickets})
+
+@login_required
+def chat_inbox(request):
+    """HU-18: Chat Interno (Bandeja)"""
+    conversaciones = Conversacion.objects.filter(
+        Q(participante_1=request.user) | Q(participante_2=request.user)
+    ).order_by('-fecha_actualizacion')
+    return render(request, 'chat_inbox.html', {'conversaciones': conversaciones})
+
+@login_required
+def chat_thread(request, usuario_id):
+    """HU-18: Chat Interno (Hilo)"""
+    otro_usuario = get_object_or_404(User, id=usuario_id)
+    if request.user == otro_usuario:
+        return redirect('home')
+
+    # Buscar o crear conversación
+    conversacion = Conversacion.objects.filter(
+        (Q(participante_1=request.user) & Q(participante_2=otro_usuario)) |
+        (Q(participante_1=otro_usuario) & Q(participante_2=request.user))
+    ).first()
+
+    if not conversacion:
+        # Restriccion: Artesano no puede iniciar chat con Comprador
+        if hasattr(request.user, 'perfil') and request.user.perfil.rol == 'artesano':
+             if hasattr(otro_usuario, 'perfil') and otro_usuario.perfil.rol == 'comprador':
+                 messages.error(request, "Los vendedores no pueden iniciar conversaciones con clientes. Debes esperar a que ellos te contacten.")
+                 return redirect('home')
+
+        conversacion = Conversacion.objects.create(participante_1=request.user, participante_2=otro_usuario)
+
+    if request.method == 'POST':
+        form = MensajeChatForm(request.POST)
+        if form.is_valid():
+            mensaje = form.save(commit=False)
+            mensaje.conversacion = conversacion
+            mensaje.remitente = request.user
+            mensaje.save()
+            conversacion.fecha_actualizacion = timezone.now()
+            conversacion.save()
+            return redirect('chat_thread', usuario_id=usuario_id)
+    else:
+        form = MensajeChatForm()
+
+    mensajes = conversacion.mensajes.order_by('fecha_envio')
+    # Marcar leídos
+    mensajes.filter(leido=False).exclude(remitente=request.user).update(leido=True)
+
+    return render(request, 'chat_thread.html', {
+        'conversacion': conversacion,
+        'mensajes': mensajes,
+        'form': form,
+        'otro_usuario': otro_usuario
+    })
+
+@login_required
+def reportar_abuso(request, content_type_str, object_id):
+    """HU-22: Reportar Producto o Tienda"""
+    # content_type_str debe ser 'producto' o 'tienda'
+    if content_type_str == 'producto':
+        model = Producto
+    elif content_type_str == 'tienda':
+        model = Tienda
+    else:
+        return redirect('home')
+
+    obj = get_object_or_404(model, id=object_id)
+    content_type = ContentType.objects.get_for_model(model)
+
+    if request.method == 'POST':
+        form = ReporteAbusoForm(request.POST)
+        if form.is_valid():
+            reporte = form.save(commit=False)
+            reporte.reportante = request.user
+            reporte.content_type = content_type
+            reporte.object_id = object_id
+            reporte.save()
+            messages.success(request, "Reporte enviado. Gracias por ayudarnos a mantener segura la comunidad.")
+            # Redirigir a la misma página (detalle del objeto)
+            if content_type_str == 'producto':
+                return redirect('detalle_producto', producto_id=object_id)
+            elif content_type_str == 'tienda':
+                return redirect('catalogo')
+            return redirect('home')
+    else:
+        form = ReporteAbusoForm()
+    
+    return render(request, 'reportar_abuso.html', {'form': form, 'obj': obj})
+
+@login_required
+def seguir_tienda(request, tienda_id):
+    """HU-23: Seguir Tienda"""
+    tienda = get_object_or_404(Tienda, id=tienda_id)
+    seguimiento = SeguirTienda.objects.filter(usuario=request.user, tienda=tienda).first()
+    
+    if seguimiento:
+        seguimiento.delete()
+        messages.info(request, f"Dejaste de seguir a {tienda.nombre}.")
+    else:
+        SeguirTienda.objects.create(usuario=request.user, tienda=tienda)
+        messages.success(request, f"Ahora sigues a {tienda.nombre} 🎉")
+        
+        # Notificar al artesano
+        Notificacion.objects.create(
+            usuario=tienda.artesano.user,
+            mensaje=f"{request.user.username} comenzó a seguir tu tienda.",
+            tipo='general'
+        )
+    
+    # Redirigir a la página desde la que vino si es posible, o a mi_tienda como fallback
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    return redirect('catalogo')

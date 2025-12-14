@@ -62,7 +62,23 @@
                 <div class="card text-dark bg-warning mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Tiendas Pendientes</h5>
-                        <p class="card-text fs-3">{{ tiendas_pendientes }}</p>
+                        <p class="card-text fs-3">{{ tiendas_pendientes_count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Reportes Abuso</h5>
+                        <p class="card-text fs-3">{{ reportes_pendientes_count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-dark bg-light border-secondary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Tickets Soporte</h5>
+                        <p class="card-text fs-3">{{ tickets_pendientes_count }}</p>
                     </div>
                 </div>
             </div>
@@ -157,40 +173,41 @@
                     <td>{{ tienda.artesano.telefono }}</td>
                     <td class="text-center">
                         {% if tienda.activa %}
-                            <span class="badge bg-success">Sí</span>
+                        <span class="badge bg-success">Sí</span>
                         {% else %}
-                            <span class="badge bg-secondary">No</span>
+                        <span class="badge bg-secondary">No</span>
                         {% endif %}
                     </td>
                     <td class="text-center">
                         {% if tienda.aprobada %}
-                            <span class="badge bg-success">Aprobada</span>
+                        <span class="badge bg-success">Aprobada</span>
                         {% else %}
-                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        <span class="badge bg-warning text-dark">Pendiente</span>
                         {% endif %}
                     </td>
                     <td class="text-center">
                         {% if tienda.artesano.correo_validado %}
-                            <span class="badge bg-success">Sí</span>
+                        <span class="badge bg-success">Sí</span>
                         {% else %}
-                            <span class="badge bg-danger">No</span>
+                        <span class="badge bg-danger">No</span>
                         {% endif %}
                     </td>
                     <td class="text-center">
                         {% if tienda.artesano.telefono_validado %}
-                            <span class="badge bg-success">Sí</span>
+                        <span class="badge bg-success">Sí</span>
                         {% else %}
-                            <span class="badge bg-danger">No</span>
+                        <span class="badge bg-danger">No</span>
                         {% endif %}
                     </td>
                     <td>{{ tienda.fecha_creacion|date:"Y-m-d H:i" }}</td>
                     <td class="text-center">
                         <!-- Activar / Desactivar -->
-                        <a href="{% url 'cambiar_estado_tienda' tienda.id %}" class="text-primary me-2" title="Activar/Desactivar">
+                        <a href="{% url 'cambiar_estado_tienda' tienda.id %}" class="text-primary me-2"
+                            title="Activar/Desactivar">
                             {% if tienda.activa %}
-                                <i class="bi bi-toggle-on" style="font-size:1.25rem"></i>
+                            <i class="bi bi-toggle-on" style="font-size:1.25rem"></i>
                             {% else %}
-                                <i class="bi bi-toggle-off" style="font-size:1.25rem"></i>
+                            <i class="bi bi-toggle-off" style="font-size:1.25rem"></i>
                             {% endif %}
                         </a>
 
@@ -200,17 +217,20 @@
                         </a>
 
                         <!-- Rechazar / marcar no aprobada -->
-                        <a href="{% url 'rechazar_tienda' tienda.id %}" class="text-danger me-2" title="Rechazar tienda">
+                        <a href="{% url 'rechazar_tienda' tienda.id %}" class="text-danger me-2"
+                            title="Rechazar tienda">
                             <i class="bi bi-x-circle-fill"></i>
                         </a>
 
                         <!-- Validar correo -->
-                        <a href="{% url 'validar_correo_tienda' tienda.id %}" class="text-success me-2" title="Validar correo">
+                        <a href="{% url 'validar_correo_tienda' tienda.id %}" class="text-success me-2"
+                            title="Validar correo">
                             <i class="bi bi-envelope-check"></i>
                         </a>
 
                         <!-- Validar teléfono -->
-                        <a href="{% url 'validar_telefono_tienda' tienda.id %}" class="text-warning me-2" title="Validar teléfono">
+                        <a href="{% url 'validar_telefono_tienda' tienda.id %}" class="text-warning me-2"
+                            title="Validar teléfono">
                             <i class="bi bi-phone-check"></i>
                         </a>
 
@@ -220,26 +240,31 @@
                         </a>
 
                         <!-- Eliminar -->
-                        <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#modalEliminarT{{ tienda.id }}" title="Eliminar">
+                        <a href="#" class="text-danger" data-bs-toggle="modal"
+                            data-bs-target="#modalEliminarT{{ tienda.id }}" title="Eliminar">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>
                 </tr>
 
                 <!-- Modal eliminar tienda -->
-                <div class="modal fade" id="modalEliminarT{{ tienda.id }}" tabindex="-1" aria-labelledby="modalEliminarLabelT{{ tienda.id }}" aria-hidden="true">
+                <div class="modal fade" id="modalEliminarT{{ tienda.id }}" tabindex="-1"
+                    aria-labelledby="modalEliminarLabelT{{ tienda.id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="modalEliminarLabelT{{ tienda.id }}">
-                                    <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Confirmar eliminación
+                                    <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Confirmar
+                                    eliminación
                                 </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
                             </div>
                             <div class="modal-body text-center">
                                 <i class="bi bi-shop text-danger" style="font-size: 3rem;"></i>
                                 <h5 class="mt-3">¿Eliminar la tienda <strong>{{ tienda.nombre }}</strong>?</h5>
-                                <p class="text-muted">Esta acción eliminará la tienda y todos sus productos. No se puede deshacer.</p>
+                                <p class="text-muted">Esta acción eliminará la tienda y todos sus productos. No se puede
+                                    deshacer.</p>
                             </div>
                             <div class="modal-footer justify-content-center border-0 pb-3">
                                 <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -280,9 +305,9 @@
                     <td>{{ r.fecha|date:"Y-m-d H:i" }}</td>
                     <td class="text-center">
                         {% if r.aprobada %}
-                            <span class="badge bg-success">Aprobada</span>
+                        <span class="badge bg-success">Aprobada</span>
                         {% else %}
-                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        <span class="badge bg-warning text-dark">Pendiente</span>
                         {% endif %}
                     </td>
                     <td class="text-center">
@@ -302,21 +327,24 @@
                         </a>
 
                         <!-- Modal ver comentario completo -->
-                        <a href="#" class="text-secondary" data-bs-toggle="modal" data-bs-target="#modalComentario{{ r.id }}" title="Ver comentario">
+                        <a href="#" class="text-secondary" data-bs-toggle="modal"
+                            data-bs-target="#modalComentario{{ r.id }}" title="Ver comentario">
                             <i class="bi bi-chat-left-text"></i>
                         </a>
                     </td>
                 </tr>
 
                 <!-- Modal comentario -->
-                <div class="modal fade" id="modalComentario{{ r.id }}" tabindex="-1" aria-labelledby="modalComentarioLabel{{ r.id }}" aria-hidden="true">
+                <div class="modal fade" id="modalComentario{{ r.id }}" tabindex="-1"
+                    aria-labelledby="modalComentarioLabel{{ r.id }}" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="modalComentarioLabel{{ r.id }}">
                                     Comentario de {{ r.usuario.username }}
                                 </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
                             </div>
                             <div class="modal-body">
                                 <p class="small text-muted">Tienda: <strong>{{ r.tienda.nombre }}</strong></p>
@@ -331,6 +359,66 @@
                         </div>
                     </div>
                 </div>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- TABLA: Tickets de Soporte -->
+        <h3 class="my-4">Tickets de Soporte (Abiertos)</h3>
+        <table id="tbtickets" class="table table-striped table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Asunto</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tickets %}
+                <tr>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.usuario.username }}</td>
+                    <td>{{ t.asunto }}</td>
+                    <td><span class="badge bg-warning text-dark">{{ t.get_estado_display }}</span></td>
+                    <td>{{ t.fecha_creacion|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <a href="{% url 'soporte' %}" class="btn btn-sm btn-primary">Ver</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- TABLA: Reportes de Abuso -->
+        <h3 class="my-4">Reportes de Abuso</h3>
+        <table id="tbreportes" class="table table-striped table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Reportante</th>
+                    <th>Motivo</th>
+                    <th>Objetivo</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reportes %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.reportante.username }}</td>
+                    <td>{{ r.motivo|truncatechars:50 }}</td>
+                    <td>{{ r.content_object }}</td>
+                    <td>{{ r.fecha_creacion|date:"Y-m-d H:i" }}</td>
+                    <td>{{ r.get_estado_display }}</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-danger">Revisar</a>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -378,7 +466,22 @@
             ],
             language: { url: 'https://cdn.datatables.net/plug-ins/2.3.4/i18n/es-MX.json' }
         });
+
+        new DataTable('#tbtickets', {
+            responsive: true,
+            dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print', 'colvis'],
+            language: { url: 'https://cdn.datatables.net/plug-ins/2.3.4/i18n/es-MX.json' }
+        });
+
+        new DataTable('#tbreportes', {
+            responsive: true,
+            dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print', 'colvis'],
+            language: { url: 'https://cdn.datatables.net/plug-ins/2.3.4/i18n/es-MX.json' }
+        });
     </script>
 
 </body>
+
 </html>

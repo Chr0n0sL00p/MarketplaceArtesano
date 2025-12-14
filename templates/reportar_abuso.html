@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportar Abuso - Marketplace{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-flag-fill text-danger display-4"></i>
+                        <h2 class="fw-bold mt-3">Reportar Contenido</h2>
+                        <p class="text-muted">Estás reportando: <strong>{{ obj }}</strong></p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Motivo del reporte</label>
+                            {{ form.motivo }}
+                            <div class="form-text">Describe por qué este contenido infringe las normas.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger fw-bold">Enviar Reporte</button>
+                            <a href="javascript:history.back()" class="btn btn-light">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
